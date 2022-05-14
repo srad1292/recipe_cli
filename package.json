@@ -1,0 +1,15 @@
+{
+  "name": "recipe_cli",
+  "version": "1.0.0",
+  "description": "CLI to save, view, and search recipes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "recipes",
+    "cli"
+  ],
+  "author": "Sam Radford",
+  "license": "ISC"
+}
