@@ -1,3 +1,5 @@
+const readline = require('readline');
+
 const args = process.argv;
 let commands = [];
 
@@ -142,7 +144,68 @@ function handleGenericHelp() {
 
 function showAddDocumentation() {}
 
-function handleAdd() {}
+async function handleAdd() {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    const prompt = (query) => new Promise((resolve) => rl.question(query, resolve));
+    // rl.on('close', () => process.exit(0));
+
+    try {
+        const name = await prompt('Recipe Name: ');
+        const prepTime = await prompt('Prep Time: ');
+        const cookTime = await prompt('Cook Time: ');
+        let ingredients = [];
+        let input = '';
+        do {
+            input = await prompt('Enter Ingredient (leave blank to continue): ');
+            if(input.trim() !== '') {
+                ingredients.push(input);
+            }
+        } while(input.trim() !== '');
+
+        let directions = [];
+        do {
+            input = await prompt('Enter Direction: ');
+            if(input.trim() !== '') {
+                directions.push(input);
+            }
+        } while(input.trim() !== '');
+
+        let notes = [];
+        do {
+            input = await prompt('Enter note: ');
+            if(input.trim() !== '') {
+                notes.push(input);
+            }
+        } while(input.trim() !== '');
+
+        let tags = [];
+        do {
+            input = await prompt('Enter tag: ');
+            if(input.trim() !== '') {
+                tags.push(input);
+            }
+        } while(input.trim() !== '');
+
+        let newRecipe = {
+            name: name,
+            prepTime: prepTime,
+            cookTime: cookTime,
+            ingredients: ingredients,
+            directions: directions,
+            notes: notes,
+            tags: tags
+        };
+        
+        console.log(newRecipe);
+
+    } catch(e) {
+        console.log("Input error");
+        console.log(e);
+        rl.close();
+    }
+
+    rl.close();
+}
 
 
 
