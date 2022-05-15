@@ -1,0 +1,33 @@
+[
+    {
+        "name": "test",
+        "prepTime": "10m",
+        "cookTime": "20m",
+        "ingredients": [
+            "a"
+        ],
+        "directions": [
+            "b"
+        ],
+        "notes": [
+            "c"
+        ],
+        "tags": [
+            "d"
+        ]
+    },
+    {
+        "name": "Test Two",
+        "prepTime": "20m",
+        "cookTime": "30m",
+        "ingredients": [
+            "FLour",
+            "Salt"
+        ],
+        "directions": [
+            "ANah"
+        ],
+        "notes": [],
+        "tags": []
+    }
+]

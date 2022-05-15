@@ -1,4 +1,5 @@
 const readline = require('readline');
+const fs = require('fs');
 
 const args = process.argv;
 let commands = [];
@@ -142,12 +143,22 @@ function handleGenericHelp() {
 
 
 
-function showAddDocumentation() {}
+function showAddDocumentation() {
+    console.log("RECIPE CLI -- ADD COMMAND");
+    console.log("\nFull: add, Alias: a");
+    console.log("\nUsage:");
+    console.log("node index.js add");
+    console.log("\nExamples");
+    console.log("Start the prompt for creating a new recipe: node index.js add");
+    console.log("\nDetails:");
+    console.log("You will be asked for different properties of a recipe.");
+    console.log("You can leave any answer blank to move ahead to the next prompt.");  
+    console.log("Once you have finished the recipe, it will be added to the recipes.json");
+}
 
 async function handleAdd() {
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
     const prompt = (query) => new Promise((resolve) => rl.question(query, resolve));
-    // rl.on('close', () => process.exit(0));
 
     try {
         const name = await prompt('Recipe Name: ');
@@ -186,6 +197,8 @@ async function handleAdd() {
             }
         } while(input.trim() !== '');
 
+        rl.close();
+
         let newRecipe = {
             name: name,
             prepTime: prepTime,
@@ -198,13 +211,40 @@ async function handleAdd() {
         
         console.log(newRecipe);
 
+        addRecipeToPersistence(newRecipe);
+
     } catch(e) {
         console.log("Input error");
         console.log(e);
         rl.close();
     }
+}
 
-    rl.close();
+async function addRecipeToPersistence(recipe) {
+    let recipes = [];
+
+    fs.readFile('recipes.json', 'utf8', (err, data) => {
+        if(err) {
+            console.log("Creating recipes.json");
+        } else {
+            try {
+                let existingData = JSON.parse(data);
+                recipes = existingData;
+            } catch(e) {
+                console.log("Error parsing existing recipes.");
+                console.log("Have you touched the file?");
+                return;
+            }
+        }
+        
+        recipes.push(recipe);
+        fs.writeFile('recipes.json', JSON.stringify(recipes), (err) => {
+            if(err) {
+                console.log("Error writing to file");
+                console.error(err);
+            }
+        }); 
+    });
 }
 
 
