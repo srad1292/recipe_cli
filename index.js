@@ -166,6 +166,7 @@ async function handleAdd() {
         const name = await prompt('Recipe Name: ');
         const prepTime = await prompt('Prep Time: ');
         const cookTime = await prompt('Cook Time: ');
+        const servings = await prompt('Servings: ');
 
         let input = '';
         let splitIngredients = false;
@@ -250,6 +251,7 @@ async function handleAdd() {
             name: name,
             prepTime: prepTime,
             cookTime: cookTime,
+            servings: servings,
             ingredients: ingredients,
             ingredientSections: ingredientSections,
             directions: directions,
