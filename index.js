@@ -152,7 +152,9 @@ function showAddDocumentation() {
     console.log("Start the prompt for creating a new recipe: node index.js add");
     console.log("\nDetails:");
     console.log("You will be asked for different properties of a recipe.");
-    console.log("You can leave any answer blank to move ahead to the next prompt.");  
+    console.log("You can leave any answer blank to move ahead to the next prompt.");
+    console.log("One of the questions will be if you want to split the ingredient list");
+    console.log("An example would be if you want to have one set of ingredients for the cake and one set for the frosting");  
     console.log("Once you have finished the recipe, it will be added to the recipes.json");
 }
 
@@ -164,14 +166,59 @@ async function handleAdd() {
         const name = await prompt('Recipe Name: ');
         const prepTime = await prompt('Prep Time: ');
         const cookTime = await prompt('Cook Time: ');
-        let ingredients = [];
+
         let input = '';
+        let splitIngredients = false;
         do {
-            input = await prompt('Enter Ingredient (leave blank to continue): ');
-            if(input.trim() !== '') {
-                ingredients.push(input);
+            input = await prompt('Split Ingredient? (y/n): ');
+            input = input.trim();
+            
+            if(input === 'y') {
+                splitIngredients = true;
+            } else if(input === 'n') {
+                splitIngredients = false;
             }
-        } while(input.trim() !== '');
+
+        } while(input !== 'y' && input !== 'n');
+
+        let ingredients = [];
+        let ingredientSections = [];
+        let ingredientSection = {};
+        let ingredientSectionItems = [];
+        let sectionHeader = '';
+        if(splitIngredients) {
+            let addAnotherSection = true;
+            do {
+                ingredientSection = {};
+                ingredientSectionItems = [];
+                sectionHeader = '';
+                input = await prompt('Enter Ingredient Section Header(leave blank to continue): ');
+                if(input.trim() === '') {
+                    addAnotherSection = false;
+                } else {
+                    sectionHeader = input;
+                    do {
+                        input = await prompt('Enter Ingredient (leave blank to continue): ');
+                        if(input.trim() !== '') {
+                            ingredientSectionItems.push(input);
+                        }
+                    } while(input.trim() !== '');
+                    ingredientSection = {
+                        sectionHeader,
+                        ingredientSectionItems 
+                    };
+                    ingredientSections.push(ingredientSection);
+                }
+            } while(addAnotherSection)
+        } else {
+            do {
+                input = await prompt('Enter Ingredient (leave blank to continue): ');
+                if(input.trim() !== '') {
+                    ingredients.push(input);
+                }
+            } while(input.trim() !== '');
+        }
+        
 
         let directions = [];
         do {
@@ -204,6 +251,7 @@ async function handleAdd() {
             prepTime: prepTime,
             cookTime: cookTime,
             ingredients: ingredients,
+            ingredientSections: ingredientSections,
             directions: directions,
             notes: notes,
             tags: tags

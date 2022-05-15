@@ -29,5 +29,74 @@
         ],
         "notes": [],
         "tags": []
+    },
+    {
+        "name": "Split Test",
+        "prepTime": "20m",
+        "cookTime": "1hr",
+        "ingredients": [],
+        "ingredientSections": [
+            {
+                "sectionHeader": "",
+                "ingredientSectionItems": [
+                    "Cream Cheese",
+                    "Vanilla"
+                ]
+            },
+            {
+                "sectionHeader": "",
+                "ingredientSectionItems": [
+                    "Flour",
+                    "Sugar",
+                    "Eggs",
+                    "Vanilla"
+                ]
+            }
+        ],
+        "directions": [
+            "Mix Frosting ingredients",
+            "Store frosting in fridge",
+            "Mix cake ingredients",
+            "Bake for some time",
+            "Eat it"
+        ],
+        "notes": [
+            "This is a test"
+        ],
+        "tags": [
+            "dessert",
+            "cake",
+            "frosting"
+        ]
+    },
+    {
+        "name": "",
+        "prepTime": "",
+        "cookTime": "",
+        "ingredients": [],
+        "ingredientSections": [
+            {
+                "sectionHeader": "frosting",
+                "ingredientSectionItems": [
+                    "bpoop",
+                    "bee["
+                ]
+            },
+            {
+                "sectionHeader": "cake",
+                "ingredientSectionItems": [
+                    "bop",
+                    "booo",
+                    "awdwa"
+                ]
+            }
+        ],
+        "directions": [
+            "no"
+        ],
+        "notes": [
+            "noaaa"
+        ],
+        "tags": []
     }
 ]
