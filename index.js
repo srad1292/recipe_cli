@@ -316,6 +316,8 @@ function showSearchDocumentation() {
     console.log("\nDetails:");
     console.log("All of the additional args are optional.");
     console.log("Tags and ingredients should each be a comma separated list");
+    console.log("The list of results will be [index] name");
+    console.log("You can use that index for the commands that involve interacting with a single recipe");
 }
 
 function handleSearch() {
@@ -338,20 +340,24 @@ function handleSearch() {
         let tagsMatch = false;
         let ingredientsMatch = false;
 
-        let matching = recipes.filter(recipe => {
+        let matching = [];
+        
+        recipes.forEach((recipe, index) => {
             nameMatches = recipe.name.toLowerCase().includes(name.toLowerCase());
             tagsMatch = tags.length === 0 || tags.every(tag => arrayContains(recipe.tags, tag));
             // todo need to update this to handle the sections as well
             ingredientsMatch = ingredients.length === 0 || ingredients.every(ingredient => arrayContains(recipe.ingredients, ingredient));
             // console.log({recipeName: recipe.name, name: nameMatches, recipeTags: recipe.tags, tags: tagsMatch, recipeIngredients: recipe.ingredients, ingredients: ingredientsMatch});
-            return nameMatches && tagsMatch && ingredientsMatch;
+            if(nameMatches && tagsMatch && ingredientsMatch) {
+                matching.push({recipe, index});
+            }
         });
 
         if(matching.length === 0) {
             console.log("No matches found");
         } else {
             matching.forEach(match => {
-                console.log(match.name);
+                console.log(`[${match.index}] ${match.recipe.name}`);
             });
         }
     });
@@ -381,6 +387,8 @@ function getIngredientsFilter(ingredients, arg) {
     if(pair.length < 2) { return ingredients; }
     return pair[1].split(",");
 }
+
+
 
 function showUpdateDocumentation() {}
 
