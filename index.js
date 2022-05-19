@@ -271,39 +271,116 @@ async function handleAdd() {
 }
 
 async function addRecipeToPersistence(recipe) {
-    let recipes = [];
-
-    fs.readFile('recipes.json', 'utf8', (err, data) => {
-        if(err) {
-            console.log("Creating recipes.json");
-        } else {
-            try {
-                let existingData = JSON.parse(data);
-                recipes = existingData;
-            } catch(e) {
-                console.log("Error parsing existing recipes.");
-                console.log("Have you touched the file?");
-                return;
-            }
-        }
-        
+    getRecipesFromPersistence((recipes) => {
         recipes.push(recipe);
         fs.writeFile('recipes.json', JSON.stringify(recipes), (err) => {
             if(err) {
                 console.log("Error writing to file");
                 console.error(err);
             }
-        }); 
+        });
+    });
+}
+
+function getRecipesFromPersistence(callback) {
+    fs.readFile('recipes.json', 'utf8', (err, data) => {
+        if(err) {
+            console.log("recipes.json did not exist");
+            callback([]);
+        } else {
+            try {
+                let existingData = JSON.parse(data);
+                recipes = existingData;
+                callback(recipes);
+            } catch(e) {
+                console.log("Error parsing existing recipes.");
+                console.log("Have you touched the file?");
+                return;
+            }
+        }
     });
 }
 
 
 
-function showSearchDocumentation() {}
+function showSearchDocumentation() {
+    console.log("RECIPE CLI -- SEARCH COMMAND");
+    console.log("\nFull: search, Alias: s");
+    console.log("\nUsage:");
+    console.log("node index.js search name=name tags=tag1,tag2 ingredients=ing1,ing2");
+    console.log("\nExamples");
+    console.log("List all recipes: node index.js s");
+    console.log("List all recipes with curry in the name: node index.js s name=curry");
+    console.log("List all recipes with the dessert tag: node index.js s t=dessert");
+    console.log("List all recipes with the dessert tag that includes chocolate: node index.js s t=dessert i=chocolate");
+    console.log("\nDetails:");
+    console.log("All of the additional args are optional.");
+    console.log("Tags and ingredients should each be a comma separated list");
+}
 
-function handleSearch() {}
+function handleSearch() {
+    let name = '';
+    let tags = [];
+    let ingredients = [];
+    let arg = '';
+    
+    for(let index = 3; index < args.length; index++) {
+        arg = args[index].toLowerCase();
+        name = getNameFilter(name, arg);
+        tags = getTagsFilter(tags, arg);
+        ingredients = getIngredientsFilter(ingredients, arg);
+    }
 
+    getRecipesFromPersistence((recipes) => {
+        if(recipes.length === 0) { return; }
 
+        let nameMatches = false;
+        let tagsMatch = false;
+        let ingredientsMatch = false;
+
+        let matching = recipes.filter(recipe => {
+            nameMatches = recipe.name.toLowerCase().includes(name.toLowerCase());
+            tagsMatch = tags.length === 0 || tags.every(tag => arrayContains(recipe.tags, tag));
+            // todo need to update this to handle the sections as well
+            ingredientsMatch = ingredients.length === 0 || ingredients.every(ingredient => arrayContains(recipe.ingredients, ingredient));
+            // console.log({recipeName: recipe.name, name: nameMatches, recipeTags: recipe.tags, tags: tagsMatch, recipeIngredients: recipe.ingredients, ingredients: ingredientsMatch});
+            return nameMatches && tagsMatch && ingredientsMatch;
+        });
+
+        if(matching.length === 0) {
+            console.log("No matches found");
+        } else {
+            matching.forEach(match => {
+                console.log(match.name);
+            });
+        }
+    });
+}
+
+function arrayContains(arr, value) {
+    return arr.findIndex(val => val.toLowerCase().includes(value.toLowerCase())) !== -1;
+}
+
+function getNameFilter(name, arg) {
+    if(!(arg.startsWith("name=") || arg.startsWith("n="))) { return name; }
+    let pair = arg.split("=");
+    if(pair.length < 2) { return name; }
+    return pair[1];
+}
+
+function getTagsFilter(tags, arg) {
+    if(!(arg.startsWith("tag=") || arg.startsWith("t="))) { return tags; }
+    let pair = arg.split("=");
+    if(pair.length < 2) { return tags; }
+    return pair[1].split(",");
+}
+
+function getIngredientsFilter(ingredients, arg) {
+    if(!(arg.startsWith("ingredients=") || arg.startsWith("i="))) { return ingredients; }
+    let pair = arg.split("=");
+    if(pair.length < 2) { return ingredients; }
+    return pair[1].split(",");
+}
 
 function showUpdateDocumentation() {}
 
